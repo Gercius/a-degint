@@ -1,0 +1,22 @@
+.map {
+    height: 100vh;
+    width: 100%;
+}
+
+.house-number {
+    background: rgba(255, 252, 243, 0.92);
+    border: 1px solid rgba(76, 91, 79, 0.45);
+    border-radius: 999px;
+    box-shadow: 0 1px 4px rgba(32, 45, 34, 0.18);
+    color: #243126;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 0;
+    padding: 0.2rem 0.35rem;
+    white-space: nowrap;
+}
+
+.house-number::before {
+    display: none;
+}
