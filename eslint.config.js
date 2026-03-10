@@ -1,4 +1,3 @@
-import { defineConfig } from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
@@ -8,7 +7,7 @@ import prettier from "eslint-config-prettier";
 import reactX from "eslint-plugin-react-x";
 import reactDom from "eslint-plugin-react-dom";
 
-export default defineConfig([
+export default [
     { ignores: ["dist"] },
 
     {
@@ -44,4 +43,4 @@ export default defineConfig([
             react: { version: "detect" },
         },
     },
-]);
+];
