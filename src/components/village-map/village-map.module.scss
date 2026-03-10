@@ -9,11 +9,15 @@
     border-radius: 999px;
     box-shadow: 0 1px 4px rgba(32, 45, 34, 0.18);
     color: #243126;
-    font-size: 0.75rem;
+    display: inline-flex;
+    font-size: 1rem;
     font-weight: 700;
+    justify-content: center;
     line-height: 1;
     margin: 0;
+    pointer-events: none;
     padding: 0.2rem 0.35rem;
+    transform: translate(-50%, -50%);
     white-space: nowrap;
 }
 
