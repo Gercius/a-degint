@@ -5,11 +5,12 @@ import styles from "./village-map.module.scss";
 
 const VILLAGE_CENTER: [number, number] = [54.8746054, 24.51654165];
 const VILLAGE_BOUNDS: LatLngBoundsExpression = [
-    [54.8689759, 24.5076891],
-    [54.8802349, 24.5253942],
+    [54.8684759, 24.5071891],
+    [54.8807349, 24.5268942],
 ];
+
 const MAP_MIN_ZOOM = 15;
-const MAP_MAX_ZOOM = 19;
+const MAP_MAX_ZOOM = 18;
 const MAP_DEFAULT_ZOOM = MAP_MIN_ZOOM;
 const TILE_LAYER_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const TILE_LAYER_ATTRIBUTION =
