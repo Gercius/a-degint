@@ -1,6 +1,7 @@
-import { divIcon, type LatLngBoundsExpression, type PathOptions, type StyleFunction } from "leaflet";
-import type { FeatureCollection, GeoJsonProperties, MultiPolygon, Polygon } from "geojson";
-import { GeoJSON, MapContainer, Marker, ScaleControl, TileLayer } from "react-leaflet";
+import { useEffect } from "react";
+import { type LatLng, type LatLngBoundsExpression, type Layer, type PathOptions, type StyleFunction } from "leaflet";
+import type { Feature, FeatureCollection, GeoJsonProperties, Geometry, MultiPolygon, Polygon } from "geojson";
+import { GeoJSON, MapContainer, ScaleControl, TileLayer, useMapEvents } from "react-leaflet";
 import villageBuildings from "../../data/village-buildings.geojson";
 import styles from "./village-map.module.scss";
 
@@ -13,6 +14,7 @@ const VILLAGE_BOUNDS: LatLngBoundsExpression = [
 const MAP_MIN_ZOOM = 15;
 const MAP_MAX_ZOOM = 18;
 const MAP_DEFAULT_ZOOM = MAP_MIN_ZOOM;
+const HOUSE_NUMBER_MIN_ZOOM = 16;
 const TILE_LAYER_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const TILE_LAYER_ATTRIBUTION =
     "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors";
@@ -24,10 +26,13 @@ const BUILDING_STYLE: PathOptions = {
 };
 
 const buildingStyle: StyleFunction = () => BUILDING_STYLE;
-const HOUSE_NUMBER_CLASS = styles["house-number"];
+const HOUSE_NUMBER_TOOLTIP_CLASS = styles.houseNumberTooltip;
 
 type BuildingGeometry = Polygon | MultiPolygon;
 type BuildingFeature = FeatureCollection<BuildingGeometry, GeoJsonProperties>["features"][number];
+type BuildingCollection = FeatureCollection<BuildingGeometry, GeoJsonProperties>;
+
+const buildingData = villageBuildings as BuildingCollection;
 
 const getBuildingLabel = (feature: BuildingFeature) => {
     const houseNumber = feature.properties?.["addr:housenumber"];
@@ -35,52 +40,66 @@ const getBuildingLabel = (feature: BuildingFeature) => {
     return typeof houseNumber === "string" ? houseNumber : null;
 };
 
-const getRingCenter = (coordinates: number[][]) => {
-    const [firstPoint] = coordinates;
+const isBuildingFeature = (feature: Feature<Geometry, GeoJsonProperties>): feature is BuildingFeature => {
+    return feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon";
+};
 
-    if (!firstPoint) {
+const getBuildingCenter = (_feature: BuildingFeature, layer: Layer): LatLng | null => {
+    if (!("getBounds" in layer) || typeof layer.getBounds !== "function") {
         return null;
     }
 
-    let minLng = firstPoint[0];
-    let maxLng = firstPoint[0];
-    let minLat = firstPoint[1];
-    let maxLat = firstPoint[1];
+    const bounds = layer.getBounds();
 
-    for (const [lng, lat] of coordinates) {
-        minLng = Math.min(minLng, lng);
-        maxLng = Math.max(maxLng, lng);
-        minLat = Math.min(minLat, lat);
-        maxLat = Math.max(maxLat, lat);
+    if (!bounds.isValid()) {
+        return null;
     }
 
-    return [(minLat + maxLat) / 2, (minLng + maxLng) / 2] as [number, number];
+    return bounds.getCenter();
 };
 
-const getBuildingCenter = (feature: BuildingFeature) => {
-    if (feature.geometry.type === "Polygon") {
-        return getRingCenter(feature.geometry.coordinates[0] ?? []);
+const updateTooltipVisibility = (mapContainer: HTMLElement, zoomLevel: number) => {
+    mapContainer.classList.toggle(styles.labelsHidden, zoomLevel < HOUSE_NUMBER_MIN_ZOOM);
+};
+
+const onEachBuilding = (feature: Feature<Geometry, GeoJsonProperties> | undefined, layer: Layer) => {
+    if (!feature || !isBuildingFeature(feature)) {
+        return;
     }
 
-    return getRingCenter(feature.geometry.coordinates[0]?.[0] ?? []);
+    const label = getBuildingLabel(feature);
+    const center = getBuildingCenter(feature, layer);
+
+    if (!label || !center) {
+        return;
+    }
+
+    layer.bindTooltip(label, {
+        className: HOUSE_NUMBER_TOOLTIP_CLASS,
+        direction: "center",
+        interactive: false,
+        permanent: true,
+        opacity: 1,
+    });
+
+    if ("getTooltip" in layer && typeof layer.getTooltip === "function") {
+        layer.getTooltip()?.setLatLng(center);
+    }
 };
 
-const houseNumberMarkers = (villageBuildings as FeatureCollection<BuildingGeometry, GeoJsonProperties>).features
-    .map((feature) => {
-        const label = getBuildingLabel(feature);
-        const position = getBuildingCenter(feature);
+const TooltipVisibilityController = () => {
+    const map = useMapEvents({
+        zoomend: (event) => {
+            updateTooltipVisibility(event.target.getContainer(), event.target.getZoom());
+        },
+    });
 
-        if (!label || !position) {
-            return null;
-        }
+    useEffect(() => {
+        updateTooltipVisibility(map.getContainer(), map.getZoom());
+    }, [map]);
 
-        return {
-            id: feature.id ?? feature.properties?.["@id"] ?? `${label}-${position[0]}-${position[1]}`,
-            label,
-            position,
-        };
-    })
-    .filter((marker): marker is NonNullable<typeof marker> => marker !== null);
+    return null;
+};
 
 export const VillageMap = () => {
     return (
@@ -98,19 +117,8 @@ export const VillageMap = () => {
                 attribution={TILE_LAYER_ATTRIBUTION}
                 url={TILE_LAYER_URL}
             />
-            <GeoJSON data={villageBuildings} style={buildingStyle} />
-            {houseNumberMarkers.map((marker) => (
-                <Marker
-                    interactive={false}
-                    key={marker.id}
-                    position={marker.position}
-                    
-                    icon={divIcon({
-                        className: HOUSE_NUMBER_CLASS,
-                        html: marker.label,
-                    })}
-                />
-            ))}
+            <GeoJSON data={buildingData} onEachFeature={onEachBuilding} style={buildingStyle} />
+            <TooltipVisibilityController />
             <ScaleControl position="bottomright" />
         </MapContainer>
     );
