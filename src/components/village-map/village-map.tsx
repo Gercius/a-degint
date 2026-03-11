@@ -98,7 +98,11 @@ const TooltipVisibilityController = () => {
     return null;
 };
 
-export const VillageMap = () => {
+interface VillageMapProps {
+    children?: React.ReactNode;
+}
+
+export const VillageMap = ({ children }: VillageMapProps) => {
     return (
         <MapContainer
             center={VILLAGE_CENTER}
@@ -110,12 +114,10 @@ export const VillageMap = () => {
             scrollWheelZoom
             zoom={MAP_DEFAULT_ZOOM}
         >
-            <TileLayer
-                attribution={TILE_LAYER_ATTRIBUTION}
-                url={TILE_LAYER_URL}
-            />
+            <TileLayer attribution={TILE_LAYER_ATTRIBUTION} url={TILE_LAYER_URL} />
             <GeoJSON data={buildingData} onEachFeature={onEachBuilding} style={buildingStyle} />
             <TooltipVisibilityController />
+            {children}
             <ScaleControl position="bottomright" />
         </MapContainer>
     );

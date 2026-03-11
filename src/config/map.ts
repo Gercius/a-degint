@@ -13,4 +13,13 @@ export const MAP_DEFAULT_ZOOM = MAP_MIN_ZOOM;
 
 export const TILE_LAYER_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 export const TILE_LAYER_ATTRIBUTION =
-    "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors";
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+export const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
+
+// Wind configuration
+export const WIND_REFRESH_INTERVAL_MS = 600_000; // 10 minutes
+export const WIND_ARROW_GRID_COLS = 4;
+export const WIND_ARROW_GRID_ROWS = 3;
+export const WIND_ARROW_COLOR = "#1a1a1a";
+export const WIND_ARROW_OPACITY = 0.7;
