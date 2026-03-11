@@ -8,11 +8,11 @@ interface HomepageProps {
 }
 
 export const Homepage = ({ windData }: HomepageProps) => {
-    const { wind, status, error, lastUpdated, refresh } = windData;
+    const { wind, status, error, lastUpdated } = windData;
 
     return (
         <main className="app-shell">
-            <WindStatusBar wind={wind} status={status} error={error} lastUpdated={lastUpdated} onRefresh={refresh} />
+            <WindStatusBar wind={wind} status={status} error={error} lastUpdated={lastUpdated} />
             <VillageMap>
                 <WindLayer wind={wind} />
             </VillageMap>

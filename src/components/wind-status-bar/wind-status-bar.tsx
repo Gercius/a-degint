@@ -7,10 +7,9 @@ interface WindStatusBarProps {
     status: "idle" | "loading" | "success" | "error";
     error: string | null;
     lastUpdated: Date | null;
-    onRefresh: () => void;
 }
 
-export const WindStatusBar = ({ wind, status, error, lastUpdated, onRefresh }: WindStatusBarProps) => {
+export const WindStatusBar = ({ wind, status, error, lastUpdated }: WindStatusBarProps) => {
     const isLoading = status === "loading";
 
     return (
@@ -33,16 +32,6 @@ export const WindStatusBar = ({ wind, status, error, lastUpdated, onRefresh }: W
                     <span className={styles.updated}>Atnaujinta: {formatTime(lastUpdated)}</span>
                 )}
             </div>
-
-            <button
-                className={styles.refreshButton}
-                onClick={onRefresh}
-                disabled={isLoading}
-                aria-label="Atnaujinti vėjo duomenis"
-                type="button"
-            >
-                🔄
-            </button>
         </div>
     );
 };
