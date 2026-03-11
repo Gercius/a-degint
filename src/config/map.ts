@@ -18,7 +18,7 @@ export const TILE_LAYER_ATTRIBUTION =
 export const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
 // Wind configuration
-export const WIND_REFRESH_INTERVAL_MS = 300_000; // 5 minutes
+export const WIND_REFRESH_INTERVAL_MS = 600_000; // 10 minutes
 export const WIND_ARROW_GRID_COLS = 4;
 export const WIND_ARROW_GRID_ROWS = 5;
 export const WIND_ARROW_COLOR = "#60a5fa"; // light blue
