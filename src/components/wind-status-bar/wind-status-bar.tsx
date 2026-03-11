@@ -1,5 +1,5 @@
 import type { WindData } from "../../services/wind";
-import { degreesToCardinal, formatTime } from "../../utils/wind";
+import { degreesToLithuanianDirection, formatTime } from "../../utils/wind";
 import styles from "./wind-status-bar.module.scss";
 
 interface WindStatusBarProps {
@@ -18,19 +18,19 @@ export const WindStatusBar = ({ wind, status, error, lastUpdated, onRefresh }: W
             <div className={styles.content}>
                 {wind && (
                     <span className={styles.windInfo}>
-                        Wind: {wind.wind_speed_10m.toFixed(1)} m/s · {Math.round(wind.wind_direction_10m)}°{" "}
-                        {degreesToCardinal(wind.wind_direction_10m)}
+                        Vėjas: {wind.wind_speed_10m.toFixed(1)} m/s · {Math.round(wind.wind_direction_10m)}°{" "}
+                        {degreesToLithuanianDirection(wind.wind_direction_10m)}
                     </span>
                 )}
 
-                {status === "idle" && <span className={styles.status}>Waiting for data...</span>}
+                {status === "idle" && <span className={styles.status}>Laukiama duomenų...</span>}
 
-                {isLoading && <span className={styles.loading}>Loading...</span>}
+                {isLoading && <span className={styles.loading}>Kraunama...</span>}
 
-                {status === "error" && error && <span className={styles.error}>Error: {error}</span>}
+                {status === "error" && error && <span className={styles.error}>Klaida: {error}</span>}
 
                 {lastUpdated && status !== "idle" && status !== "loading" && (
-                    <span className={styles.updated}>Last updated: {formatTime(lastUpdated)}</span>
+                    <span className={styles.updated}>Atnaujinta: {formatTime(lastUpdated)}</span>
                 )}
             </div>
 
@@ -38,7 +38,7 @@ export const WindStatusBar = ({ wind, status, error, lastUpdated, onRefresh }: W
                 className={styles.refreshButton}
                 onClick={onRefresh}
                 disabled={isLoading}
-                aria-label="Refresh wind data"
+                aria-label="Atnaujinti vėjo duomenis"
                 type="button"
             >
                 🔄

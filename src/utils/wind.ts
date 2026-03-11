@@ -1,25 +1,17 @@
-const CARDINAL_DIRECTIONS = [
-    { dir: "N", min: 348.75, max: 11.25 },
-    { dir: "NNE", min: 11.25, max: 33.75 },
-    { dir: "NE", min: 33.75, max: 56.25 },
-    { dir: "ENE", min: 56.25, max: 78.75 },
-    { dir: "E", min: 78.75, max: 101.25 },
-    { dir: "ESE", min: 101.25, max: 123.75 },
-    { dir: "SE", min: 123.75, max: 146.25 },
-    { dir: "SSE", min: 146.25, max: 168.75 },
-    { dir: "S", min: 168.75, max: 191.25 },
-    { dir: "SSW", min: 191.25, max: 213.75 },
-    { dir: "SW", min: 213.75, max: 236.25 },
-    { dir: "WSW", min: 236.25, max: 258.75 },
-    { dir: "W", min: 258.75, max: 281.25 },
-    { dir: "WNW", min: 281.25, max: 303.75 },
-    { dir: "NW", min: 303.75, max: 326.25 },
-    { dir: "NNW", min: 326.25, max: 348.75 },
+const LITHUANIAN_DIRECTIONS = [
+    { dir: "Šiaurės", min: 337.5, max: 22.5 },
+    { dir: "Šiaurės Rytų", min: 22.5, max: 67.5 },
+    { dir: "Rytų", min: 67.5, max: 112.5 },
+    { dir: "Pietryčių", min: 112.5, max: 157.5 },
+    { dir: "Pietų", min: 157.5, max: 202.5 },
+    { dir: "Pietvakarių", min: 202.5, max: 247.5 },
+    { dir: "Vakarų", min: 247.5, max: 292.5 },
+    { dir: "Šiaurės Vakarų", min: 292.5, max: 337.5 },
 ];
 
-export function degreesToCardinal(deg: number): string {
+export function degreesToLithuanianDirection(deg: number): string {
     const normalized = ((deg % 360) + 360) % 360;
-    for (const { dir, min, max } of CARDINAL_DIRECTIONS) {
+    for (const { dir, min, max } of LITHUANIAN_DIRECTIONS) {
         if (min < max) {
             if (normalized >= min && normalized < max) {
                 return dir;
@@ -30,13 +22,12 @@ export function degreesToCardinal(deg: number): string {
             }
         }
     }
-    return "N";
+    return "Šiaurės";
 }
 
 export function formatTime(date: Date): string {
-    return date.toLocaleTimeString("en-US", {
+    return date.toLocaleTimeString("lt-LT", {
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false,
     });
 }
