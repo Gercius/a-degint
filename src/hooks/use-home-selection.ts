@@ -10,7 +10,11 @@ export interface UseHomeSelectionReturn {
     downwindBuildings: Building[];
 }
 
-export function useHomeSelection(buildings: Building[], windDirection: number | null): UseHomeSelectionReturn {
+export function useHomeSelection(
+    buildings: Building[],
+    windDirection: number | null,
+    windSpeedMs: number | null,
+): UseHomeSelectionReturn {
     // Initialize from localStorage
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(() => {
         const storedId = localStorage.getItem(STORAGE_KEY);
@@ -31,11 +35,11 @@ export function useHomeSelection(buildings: Building[], windDirection: number | 
 
     // Derive downwind buildings
     const downwindBuildings = useMemo(() => {
-        if (!selectedBuilding || windDirection === null) {
+        if (!selectedBuilding || windDirection === null || windSpeedMs === null) {
             return [];
         }
-        return getDownwindBuildings(selectedBuilding, buildings, windDirection);
-    }, [selectedBuilding, windDirection, buildings]);
+        return getDownwindBuildings(selectedBuilding, buildings, windDirection, windSpeedMs);
+    }, [selectedBuilding, windDirection, windSpeedMs, buildings]);
 
     return {
         selectedBuilding,

@@ -4,6 +4,7 @@ import { WindStatusBar } from "../components/wind-status-bar/wind-status-bar";
 import { WindLayer } from "../components/wind-layer/wind-layer";
 import { ControlPanel } from "../components/control-panel/control-panel";
 import { HomeMarker } from "../components/home-marker/home-marker";
+import { SmokeCone } from "../components/smoke-cone/smoke-cone";
 import { useHomeSelection } from "../hooks/use-home-selection";
 import { extractAddresses, sortBuildingsByLabel } from "../utils/buildings";
 import type { UseWindReturn } from "../hooks/use-wind";
@@ -30,6 +31,7 @@ export const Homepage = ({ windData }: HomepageProps) => {
     const { selectedBuilding, setSelectedBuilding, downwindBuildings } = useHomeSelection(
         buildings,
         wind?.wind_direction_10m ?? null,
+        wind?.wind_speed_10m ?? null,
     );
 
     // Determine wind status for smoke warning
@@ -45,6 +47,13 @@ export const Homepage = ({ windData }: HomepageProps) => {
             <WindStatusBar wind={wind} status={status} error={error} lastUpdated={lastUpdated} />
             <VillageMap selectedBuilding={selectedBuilding} downwindBuildings={downwindBuildings}>
                 <WindLayer wind={wind} />
+                {selectedBuilding && wind && (
+                    <SmokeCone
+                        origin={selectedBuilding.center}
+                        windDirection={wind.wind_direction_10m}
+                        windSpeedMs={wind.wind_speed_10m}
+                    />
+                )}
                 <HomeMarker building={selectedBuilding} />
             </VillageMap>
             <ControlPanel

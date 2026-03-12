@@ -74,7 +74,7 @@ const buildings: Building[] = [
     createBuilding("4", 54.878, 24.52, "4, Elm St"), // ~222m south
     createBuilding("5", 54.875, 24.52, "5, Far South St"), // ~555m south, should still be included
 ];
-const downwind = getDownwindBuildings(origin, buildings, 0); // Wind from north → downwind is south
+const downwind = getDownwindBuildings(origin, buildings, 0, 5); // Wind from north → downwind is south
 console.log(`  Origin: ${origin.label}`);
 console.log(`  Wind: 0° (from north)`);
 console.log(`  Downwind buildings found: ${downwind.length}`);

@@ -1,5 +1,5 @@
 import { sortBuildingsByLabel, type LatLng, type Building } from "./buildings";
-import { DOWNWIND_CONE_ANGLE_DEG, DOWNWIND_MAX_DISTANCE_M } from "../config/wind";
+import { getDownwindProfile } from "../config/wind";
 
 /**
  * Calculates the compass bearing from one point to another.
@@ -88,7 +88,18 @@ export function isInDownwindCone(
  * @param windDirection - Current wind direction in degrees
  * @returns Array of buildings in the downwind cone, sorted by label
  */
-export function getDownwindBuildings(origin: Building, allBuildings: Building[], windDirection: number): Building[] {
+export function getDownwindBuildings(
+    origin: Building,
+    allBuildings: Building[],
+    windDirection: number,
+    windSpeedMs: number,
+): Building[] {
+    const profile = getDownwindProfile(windSpeedMs);
+
+    if (!profile.isActive) {
+        return [];
+    }
+
     const downwindBuildings = allBuildings.filter((building) => {
         if (building.id === origin.id) {
             return false; // Exclude origin
@@ -97,8 +108,8 @@ export function getDownwindBuildings(origin: Building, allBuildings: Building[],
             origin.center,
             building.center,
             windDirection,
-            DOWNWIND_CONE_ANGLE_DEG,
-            DOWNWIND_MAX_DISTANCE_M,
+            profile.coneAngleDeg,
+            profile.maxDistanceM,
         );
     });
 
