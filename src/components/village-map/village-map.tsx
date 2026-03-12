@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { type LatLng, type Layer, type PathOptions, type StyleFunction } from "leaflet";
 import type { Feature, FeatureCollection, GeoJsonProperties, Geometry, MultiPolygon, Polygon } from "geojson";
 import { GeoJSON, MapContainer, ScaleControl, TileLayer, useMap } from "react-leaflet";
@@ -13,16 +13,44 @@ import {
     TILE_LAYER_URL,
     TILE_LAYER_ATTRIBUTION,
 } from "../../config/map";
+import type { Building } from "../../utils/buildings";
 
 const HOUSE_NUMBER_MIN_ZOOM = 16;
-const BUILDING_STYLE: PathOptions = {
+const DEFAULT_BUILDING_STYLE: PathOptions = {
     color: "#4c5b4f",
     fillColor: "#8fa691",
     fillOpacity: 0.35,
     weight: 1,
 };
 
-const buildingStyle: StyleFunction = () => BUILDING_STYLE;
+const SELECTED_BUILDING_STYLE: PathOptions = {
+    color: "#16a34a",
+    fillColor: "#22c55e",
+    fillOpacity: 0.6,
+    weight: 2,
+};
+
+const DOWNWIND_BUILDING_STYLE: PathOptions = {
+    color: "#dc2626",
+    fillColor: "#ef4444",
+    fillOpacity: 0.5,
+    weight: 2,
+};
+
+const getBuildingStyle = (
+    buildingId: string,
+    selectedBuildingId: string | undefined,
+    downwindBuildingIds: Set<string>,
+): PathOptions => {
+    if (buildingId === selectedBuildingId) {
+        return SELECTED_BUILDING_STYLE;
+    }
+    if (downwindBuildingIds.has(buildingId)) {
+        return DOWNWIND_BUILDING_STYLE;
+    }
+    return DEFAULT_BUILDING_STYLE;
+};
+
 const HOUSE_NUMBER_TOOLTIP_CLASS = styles.houseNumberTooltip;
 
 type BuildingGeometry = Polygon | MultiPolygon;
@@ -107,10 +135,11 @@ const TooltipVisibilityController = () => {
 
 interface VillageMapProps {
     children?: React.ReactNode;
-    selectedBuilding?: { center: [number, number] } | null;
+    selectedBuilding?: Building | null;
+    downwindBuildings?: Building[];
 }
 
-const ZoomToBuilding = ({ building }: { building?: { center: [number, number] } | null }) => {
+const ZoomToBuilding = ({ building }: { building?: Building | null }) => {
     const map = useMap();
 
     useEffect(() => {
@@ -124,7 +153,18 @@ const ZoomToBuilding = ({ building }: { building?: { center: [number, number] } 
     return null;
 };
 
-export const VillageMap = ({ children, selectedBuilding }: VillageMapProps) => {
+export const VillageMap = ({ children, selectedBuilding, downwindBuildings = [] }: VillageMapProps) => {
+    const selectedBuildingId = selectedBuilding?.id;
+    const downwindBuildingIds = useMemo(() => {
+        return new Set(downwindBuildings.map((b) => b.id));
+    }, [downwindBuildings]);
+
+    const buildingStyle: StyleFunction = (feature) => {
+        if (!feature) return DEFAULT_BUILDING_STYLE;
+        const buildingId = feature.id as string;
+        return getBuildingStyle(buildingId, selectedBuildingId, downwindBuildingIds);
+    };
+
     return (
         <MapContainer
             center={VILLAGE_CENTER}

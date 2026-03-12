@@ -43,7 +43,7 @@ export const Homepage = ({ windData }: HomepageProps) => {
     return (
         <main className="app-shell">
             <WindStatusBar wind={wind} status={status} error={error} lastUpdated={lastUpdated} />
-            <VillageMap selectedBuilding={selectedBuilding}>
+            <VillageMap selectedBuilding={selectedBuilding} downwindBuildings={downwindBuildings}>
                 <WindLayer wind={wind} />
                 <HomeMarker building={selectedBuilding} />
             </VillageMap>

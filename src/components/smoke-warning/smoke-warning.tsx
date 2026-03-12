@@ -44,12 +44,13 @@ export function SmokeWarning({ selectedBuilding, downwindBuildings, windStatus }
         );
     }
 
-    // Warning state - list affected buildings
-    const affectedAddresses = downwindBuildings.map((b) => b.label).join(", ");
-
+    // Warning state - show generic warning (affected houses marked red on map)
     return (
         <div className={styles.smokeWarning}>
-            <p className={styles.warning}>Dūmai gali pasiekti: {affectedAddresses}</p>
+            <p className={styles.warning}>
+                Dūmai gali pasiekti kaimynų namus! Raudonos spalvos žymėjimas žemėlapyje rodo namus, kurie gali būti
+                paveikti.
+            </p>
         </div>
     );
 }

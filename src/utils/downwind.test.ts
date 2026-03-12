@@ -72,15 +72,16 @@ const buildings: Building[] = [
     createBuilding("2", 54.8805, 24.525, "2, Oak St"), // ~60m east, not south
     createBuilding("3", 54.879, 24.52, "3, Pine St"), // ~111m south
     createBuilding("4", 54.878, 24.52, "4, Elm St"), // ~222m south
+    createBuilding("5", 54.875, 24.52, "5, Far South St"), // ~555m south, should still be included
 ];
 const downwind = getDownwindBuildings(origin, buildings, 0); // Wind from north → downwind is south
 console.log(`  Origin: ${origin.label}`);
 console.log(`  Wind: 0° (from north)`);
 console.log(`  Downwind buildings found: ${downwind.length}`);
 console.log(`  Downwind building labels: ${downwind.map((b) => b.label).join(", ")}`);
-// Buildings south of origin (lower latitude) within 300m should be in the downwind cone
-const expectedLabels = ["3, Pine St", "4, Elm St"]; // These are south
-const passed = downwind.length === 2 && downwind.every((b) => expectedLabels.includes(b.label));
+// Buildings south of origin (lower latitude) should be in the downwind cone regardless of distance
+const expectedLabels = ["3, Pine St", "4, Elm St", "5, Far South St"];
+const passed = downwind.length === 3 && downwind.every((b) => expectedLabels.includes(b.label));
 console.log(`  ${passed ? "✓ PASS" : "✗ FAIL"}\n`);
 
 console.log("=== All verification tests completed ===");
