@@ -6,7 +6,7 @@ import { ControlPanel } from "../components/control-panel/control-panel";
 import { HomeMarker } from "../components/home-marker/home-marker";
 import { SmokeCone } from "../components/smoke-cone/smoke-cone";
 import { useHomeSelection } from "../hooks/use-home-selection";
-import { extractAddresses, sortBuildingsByLabel } from "../utils/buildings";
+import { extractAddresses, extractBuildings, sortBuildingsByLabel } from "../utils/buildings";
 import type { UseWindReturn } from "../hooks/use-wind";
 import type { Building } from "../utils/buildings";
 
@@ -27,11 +27,14 @@ export const Homepage = ({ windData }: HomepageProps) => {
         return sortBuildingsByLabel(extracted);
     }, [features]);
 
+    const allBuildings = useMemo<Building[]>(() => extractBuildings(features), [features]);
+
     // Hook for home selection and downwind calculation
     const { selectedBuilding, setSelectedBuilding, downwindBuildings } = useHomeSelection(
         buildings,
         wind?.wind_direction_10m ?? null,
         wind?.wind_speed_10m ?? null,
+        allBuildings,
     );
 
     // Determine wind status for smoke warning

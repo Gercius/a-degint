@@ -34,6 +34,14 @@ function getAddressPart(props: GeoJsonProperties, ...keys: string[]): string {
     return "";
 }
 
+function getBuildingLabel(props: GeoJsonProperties): string {
+    const houseNumber = getAddressPart(props, "addr:housenumber", "addr:house_number");
+    const street = getAddressPart(props, "addr:street");
+    const village = getAddressPart(props, "addr:village", "addr:city", "addr:hamlet", "addr:suburb");
+
+    return [village, street, houseNumber].filter(Boolean).join(", ");
+}
+
 function getSortKey(label: string) {
     const [village = "", street = "", houseNumber = ""] = label.split(", ").map((part) => part.trim());
     const numberMatch = houseNumber.match(/^(\d+)/);
@@ -78,24 +86,26 @@ export function extractAddresses(features: GeoJsonFeature[]): Building[] {
             continue;
         }
 
-        const houseNumber = hasHousenumber ? String(props["addr:housenumber"]).trim() : String(props["addr:house_number"]).trim();
-        const street = getAddressPart(props, "addr:street");
-        const village = getAddressPart(props, "addr:village", "addr:city", "addr:hamlet", "addr:suburb");
-
-        const parts = [village, street, houseNumber].filter(Boolean);
-        const label = parts.join(", ");
-
         const center = getBuildingCenter(feature);
 
         buildings.push({
             id: feature.id,
-            label,
+            label: getBuildingLabel(props),
             center,
             feature,
         });
     }
 
     return buildings;
+}
+
+export function extractBuildings(features: GeoJsonFeature[]): Building[] {
+    return features.map((feature) => ({
+        id: feature.id,
+        label: getBuildingLabel(feature.properties),
+        center: getBuildingCenter(feature),
+        feature,
+    }));
 }
 
 export function sortBuildingsByLabel(buildings: Building[]): Building[] {

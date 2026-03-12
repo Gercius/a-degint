@@ -14,6 +14,7 @@ export function useHomeSelection(
     buildings: Building[],
     windDirection: number | null,
     windSpeedMs: number | null,
+    allBuildings: Building[] = buildings,
 ): UseHomeSelectionReturn {
     // Initialize from localStorage
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(() => {
@@ -38,8 +39,8 @@ export function useHomeSelection(
         if (!selectedBuilding || windDirection === null || windSpeedMs === null) {
             return [];
         }
-        return getDownwindBuildings(selectedBuilding, buildings, windDirection, windSpeedMs);
-    }, [selectedBuilding, windDirection, windSpeedMs, buildings]);
+        return getDownwindBuildings(selectedBuilding, allBuildings, windDirection, windSpeedMs);
+    }, [selectedBuilding, windDirection, windSpeedMs, allBuildings]);
 
     return {
         selectedBuilding,
