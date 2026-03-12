@@ -8,6 +8,20 @@ interface AddressSelectorProps {
     onChange: (building: Building | null) => void;
 }
 
+function normalizeSearchValue(value: string) {
+    return value
+        .toLocaleLowerCase("lt-LT")
+        .normalize("NFD")
+        .replace(/\p{Diacritic}/gu, "");
+}
+
+function tokenizeSearchValue(value: string) {
+    return normalizeSearchValue(value)
+        .replace(/[^a-z0-9]+/g, " ")
+        .split(/\s+/)
+        .filter(Boolean);
+}
+
 export function AddressSelector({ buildings, selected, onChange }: AddressSelectorProps) {
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
@@ -15,11 +29,25 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
     const inputRef = useRef<HTMLInputElement>(null);
     const listRef = useRef<HTMLUListElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const skipNextFocusOpenRef = useRef(false);
 
     // Filter buildings based on input
-    const filteredBuildings = buildings.filter((building) =>
-        building.label.toLowerCase().includes(inputValue.toLowerCase()),
-    );
+    const normalizedInputValue = normalizeSearchValue(inputValue).trim();
+    const searchTokens = tokenizeSearchValue(inputValue);
+    const filteredBuildings = buildings.filter((building) => {
+        const normalizedLabel = normalizeSearchValue(building.label);
+
+        if (!normalizedInputValue) {
+            return true;
+        }
+
+        if (normalizedLabel.includes(normalizedInputValue)) {
+            return true;
+        }
+
+        const labelTokens = tokenizeSearchValue(building.label);
+        return searchTokens.every((token) => labelTokens.some((labelToken) => labelToken.includes(token)));
+    });
 
     // Reset highlighted index when filtered list changes
     useEffect(() => {
@@ -50,6 +78,7 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
     // Handle building selection
     const handleSelect = useCallback(
         (building: Building) => {
+            skipNextFocusOpenRef.current = true;
             onChange(building);
             setIsOpen(false);
             inputRef.current?.focus();
@@ -59,6 +88,7 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
 
     // Handle clear
     const handleClear = useCallback(() => {
+        skipNextFocusOpenRef.current = true;
         onChange(null);
         setInputValue("");
         setIsOpen(false);
@@ -124,7 +154,14 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
                         setIsOpen(true);
                         setHighlightedIndex(-1);
                     }}
-                    onFocus={() => setIsOpen(true)}
+                    onFocus={() => {
+                        if (skipNextFocusOpenRef.current) {
+                            skipNextFocusOpenRef.current = false;
+                            return;
+                        }
+
+                        setIsOpen(true);
+                    }}
                     onKeyDown={handleKeyDown}
                     aria-autocomplete="list"
                     aria-controls="address-listbox"

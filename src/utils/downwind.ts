@@ -1,4 +1,4 @@
-import type { LatLng, Building } from "./buildings";
+import { sortBuildingsByLabel, type LatLng, type Building } from "./buildings";
 import { DOWNWIND_CONE_ANGLE_DEG, DOWNWIND_MAX_DISTANCE_M } from "../config/wind";
 
 /**
@@ -102,28 +102,5 @@ export function getDownwindBuildings(origin: Building, allBuildings: Building[],
         );
     });
 
-    // Sort by label for consistent display
     return sortBuildingsByLabel(downwindBuildings);
-}
-
-/**
- * Sorts buildings by label (numeric then alphabetical).
- * Extracted from buildings.ts to avoid duplication.
- */
-function sortBuildingsByLabel(buildings: Building[]): Building[] {
-    return [...buildings].sort((a, b) => {
-        const extractNumber = (label: string): number => {
-            const match = label.match(/^(\d+)/);
-            return match ? parseInt(match[1], 10) : 0;
-        };
-
-        const numA = extractNumber(a.label);
-        const numB = extractNumber(b.label);
-
-        if (numA !== numB) {
-            return numA - numB;
-        }
-
-        return a.label.localeCompare(b.label);
-    });
 }

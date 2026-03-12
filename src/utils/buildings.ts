@@ -23,6 +23,29 @@ export interface Building {
     feature: GeoJsonFeature;
 }
 
+function getAddressPart(props: GeoJsonProperties, ...keys: string[]): string {
+    for (const key of keys) {
+        const value = props[key];
+        if (value) {
+            return String(value).trim();
+        }
+    }
+
+    return "";
+}
+
+function getSortKey(label: string) {
+    const [village = "", street = "", houseNumber = ""] = label.split(", ").map((part) => part.trim());
+    const numberMatch = houseNumber.match(/^(\d+)/);
+
+    return {
+        village,
+        street,
+        houseNumber,
+        houseNumberValue: numberMatch ? Number.parseInt(numberMatch[1], 10) : Number.POSITIVE_INFINITY,
+    };
+}
+
 export function getBuildingCenter(feature: GeoJsonFeature): LatLng {
     const geometry = feature.geometry;
     if (geometry.type !== "Polygon") {
@@ -55,12 +78,11 @@ export function extractAddresses(features: GeoJsonFeature[]): Building[] {
             continue;
         }
 
-        const housenumber = hasHousenumber ? String(props["addr:housenumber"]) : String(props["addr:house_number"]);
-        const street = props["addr:street"] || "";
-        const city = props["addr:city"] || "";
-        const postcode = props["addr:postcode"] || "";
+        const houseNumber = hasHousenumber ? String(props["addr:housenumber"]).trim() : String(props["addr:house_number"]).trim();
+        const street = getAddressPart(props, "addr:street");
+        const village = getAddressPart(props, "addr:village", "addr:city", "addr:hamlet", "addr:suburb");
 
-        const parts = [housenumber, street, city, postcode].filter(Boolean);
+        const parts = [village, street, houseNumber].filter(Boolean);
         const label = parts.join(", ");
 
         const center = getBuildingCenter(feature);
@@ -78,18 +100,26 @@ export function extractAddresses(features: GeoJsonFeature[]): Building[] {
 
 export function sortBuildingsByLabel(buildings: Building[]): Building[] {
     return [...buildings].sort((a, b) => {
-        const extractNumber = (label: string): number => {
-            const match = label.match(/^(\d+)/);
-            return match ? parseInt(match[1], 10) : 0;
-        };
+        const sortKeyA = getSortKey(a.label);
+        const sortKeyB = getSortKey(b.label);
 
-        const numA = extractNumber(a.label);
-        const numB = extractNumber(b.label);
-
-        if (numA !== numB) {
-            return numA - numB;
+        const villageComparison = sortKeyA.village.localeCompare(sortKeyB.village, undefined, { sensitivity: "base" });
+        if (villageComparison !== 0) {
+            return villageComparison;
         }
 
-        return a.label.localeCompare(b.label);
+        const streetComparison = sortKeyA.street.localeCompare(sortKeyB.street, undefined, { sensitivity: "base" });
+        if (streetComparison !== 0) {
+            return streetComparison;
+        }
+
+        if (sortKeyA.houseNumberValue !== sortKeyB.houseNumberValue) {
+            return sortKeyA.houseNumberValue - sortKeyB.houseNumberValue;
+        }
+
+        return sortKeyA.houseNumber.localeCompare(sortKeyB.houseNumber, undefined, {
+            numeric: true,
+            sensitivity: "base",
+        });
     });
 }
