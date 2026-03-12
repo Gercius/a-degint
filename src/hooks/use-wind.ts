@@ -26,11 +26,14 @@ export function useWind(): UseWindReturn {
         try {
             setStatus("loading");
             setError(null);
-            const data = await fetchWindData(signal);
-            setWind(data);
-            setLastUpdated(new Date());
+            const result = await fetchWindData(signal);
+            setWind(result.data);
+            setLastUpdated(new Date(result.timestamp));
             setStatus("success");
         } catch (err) {
+            if (err instanceof DOMException && err.name === "AbortError") {
+                return;
+            }
             if (err instanceof WindFetchError) {
                 setError(err.message);
                 setStatus("error");
