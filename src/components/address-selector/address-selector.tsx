@@ -79,8 +79,10 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
     const handleSelect = useCallback(
         (building: Building) => {
             skipNextFocusOpenRef.current = true;
+            setInputValue(building.label);
             onChange(building);
             setIsOpen(false);
+            setHighlightedIndex(-1);
             inputRef.current?.focus();
         },
         [onChange],
