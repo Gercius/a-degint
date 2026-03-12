@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { type LatLng, type Layer, type PathOptions, type StyleFunction } from "leaflet";
 import type { Feature, FeatureCollection, GeoJsonProperties, Geometry, MultiPolygon, Polygon } from "geojson";
-import { GeoJSON, MapContainer, ScaleControl, TileLayer, useMapEvents } from "react-leaflet";
+import { GeoJSON, MapContainer, ScaleControl, TileLayer, useMap } from "react-leaflet";
 import villageBuildings from "../../data/village-buildings.geojson";
 import styles from "./village-map.module.scss";
 import {
@@ -85,14 +85,21 @@ const onEachBuilding = (feature: Feature<Geometry, GeoJsonProperties> | undefine
 };
 
 const TooltipVisibilityController = () => {
-    const map = useMapEvents({
-        zoomend: (event) => {
-            updateTooltipVisibility(event.target.getContainer(), event.target.getZoom());
-        },
-    });
+    const map = useMap();
 
     useEffect(() => {
+        const handleZoomEnd = () => {
+            updateTooltipVisibility(map.getContainer(), map.getZoom());
+        };
+
+        map.on("zoomend", handleZoomEnd);
+
+        // Initial call
         updateTooltipVisibility(map.getContainer(), map.getZoom());
+
+        return () => {
+            map.off("zoomend", handleZoomEnd);
+        };
     }, [map]);
 
     return null;
@@ -100,9 +107,24 @@ const TooltipVisibilityController = () => {
 
 interface VillageMapProps {
     children?: React.ReactNode;
+    selectedBuilding?: { center: [number, number] } | null;
 }
 
-export const VillageMap = ({ children }: VillageMapProps) => {
+const ZoomToBuilding = ({ building }: { building?: { center: [number, number] } | null }) => {
+    const map = useMap();
+
+    useEffect(() => {
+        if (building && building.center) {
+            map.flyTo(building.center, 17, {
+                duration: 1.5,
+            });
+        }
+    }, [building, map]);
+
+    return null;
+};
+
+export const VillageMap = ({ children, selectedBuilding }: VillageMapProps) => {
     return (
         <MapContainer
             center={VILLAGE_CENTER}
@@ -117,6 +139,7 @@ export const VillageMap = ({ children }: VillageMapProps) => {
             <TileLayer attribution={TILE_LAYER_ATTRIBUTION} url={TILE_LAYER_URL} />
             <GeoJSON data={buildingData} onEachFeature={onEachBuilding} style={buildingStyle} />
             <TooltipVisibilityController />
+            <ZoomToBuilding building={selectedBuilding} />
             {children}
             <ScaleControl position="bottomright" />
         </MapContainer>
