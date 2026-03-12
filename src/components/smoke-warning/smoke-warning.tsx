@@ -47,9 +47,9 @@ export function SmokeWarning({ selectedBuilding, downwindBuildings, windStatus }
     // Warning state - show generic warning (affected houses marked red on map)
     return (
         <div className={styles.smokeWarning}>
+            <p className={styles.warning}>Dūmai gali pasiekti kaimynų namus!</p>
             <p className={styles.warning}>
-                Dūmai gali pasiekti kaimynų namus! Raudonos spalvos žymėjimas žemėlapyje rodo namus, kurie gali būti
-                paveikti.
+                Raudonos spalvos žymėjimas žemėlapyje rodo namus, kurie gali būti paveikti.
             </p>
         </div>
     );
