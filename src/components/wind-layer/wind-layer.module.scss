@@ -10,7 +10,7 @@
     width: 3.5rem;
     height: 3.5rem;
     transition: transform 0.5s ease;
-    animation: blink 2s infinite ease-in-out;
+    // animation: blink 2s infinite ease-in-out;
 }
 
 .arrowMover {
@@ -28,15 +28,15 @@
     height: 100%;
 }
 
-@keyframes blink {
-    0%,
-    100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.3;
-    }
-}
+// @keyframes blink {
+//     0%,
+//     99% {
+//         opacity: 1;
+//     }
+//     100% {
+//         opacity: 0;
+//     }
+// }
 
 @keyframes moveForward {
     0%,
@@ -44,6 +44,6 @@
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-5px);
+        transform: translateY(-20px);
     }
 }
