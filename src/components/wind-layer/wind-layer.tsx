@@ -42,13 +42,13 @@ export const WindLayer = ({ wind }: WindLayerProps) => {
 
     const createArrowIcon = (): DivIcon => {
         const arrowSvg = `
-            <svg viewBox="0 0 32 32" width="32" height="32" style="transform: rotate(${rotation}deg) scale(${scale}); transition: transform 0.5s ease;">
+            <svg viewBox="0 0 32 32" width="32" height="32">
                 <path d="M14 15H9.5v-2.5L16 5l6.5 7.5V15H18v17h-4V15z" fill="${WIND_ARROW_COLOR}" fill-opacity="${WIND_ARROW_OPACITY}" />
             </svg>
         `;
 
         return new DivIcon({
-            html: `<div class="${styles.arrow}">${arrowSvg}</div>`,
+            html: `<div class="${styles.arrowRotator}" style="transform: rotate(${rotation}deg) scale(${scale});"><div class="${styles.arrowMover}">${arrowSvg}</div></div>`,
             className: styles.arrowIcon,
             iconSize: [32, 32],
             iconAnchor: [16, 16],

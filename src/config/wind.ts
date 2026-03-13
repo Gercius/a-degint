@@ -1,13 +1,13 @@
-const MIN_ACTIVE_WIND_SPEED_MS = 1.5; // Below this, direction is unreliable
+const MIN_ACTIVE_WIND_SPEED_MS = 1; // Below this, direction is unreliable
 const PROFILE_MIN_WIND_SPEED_MS = MIN_ACTIVE_WIND_SPEED_MS;
 const PROFILE_MAX_WIND_SPEED_MS = 12;
 
 // At very low wind, smoke disperses radially — use a circle instead of cone
-const MIN_DOWNWIND_CONE_ANGLE_DEG = 35;
-const MAX_DOWNWIND_CONE_ANGLE_DEG = 100; // Wider at low speed to compensate for directional uncertainty
+const MIN_DOWNWIND_CONE_ANGLE_DEG = 30;
+const MAX_DOWNWIND_CONE_ANGLE_DEG = 90; // Wider at low speed to compensate for directional uncertainty
 
 const MIN_DOWNWIND_DISTANCE_M = 250;
-const MAX_DOWNWIND_DISTANCE_M = 1800;
+const MAX_DOWNWIND_DISTANCE_M = 2000;
 
 function clamp(value: number, min: number, max: number) {
     return Math.min(max, Math.max(min, value));
