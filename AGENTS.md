@@ -12,6 +12,7 @@ Various web dev rules, reusable across various projects
 - Prefer `const` over `let`; avoid `var`
 - Avoid magic numbers — name your constants
 - Keep functions small and pure where possible; side effects should be explicit
+- No `console.log` in committed code — remove before pushing
 
 ## TypeScript
 - No `any` — use `unknown` and narrow, or define a proper type
@@ -20,10 +21,11 @@ Various web dev rules, reusable across various projects
 
 ## React
 - Name components after what they render, not how they're used (`UserAvatar`, not `SidebarProfilePic`)
-- Boolean props should read as adjectives: `isLoading`, `hasError`, `disabled` — not `loading={true}`
+- Name boolean props with `is`/`has` prefix: `isLoading`, `hasError` (native HTML exceptions like `disabled` aside)
+- Omit `={true}` for boolean props: `<Spinner isLoading />` not `<Spinner isLoading={true} />`
 - Prefer named exports for components; default exports only at route/page level
 - Event handler props use `on` prefix (`onSubmit`); internal handlers use `handle` (`handleSubmit`)
-- Hooks must be pure at the call site — side effects belong inside `useEffect`, not at module level
+- Calling a hook should not trigger side effects directly — side effects belong inside `useEffect`
 - Custom hooks own their logic completely — a component should not need to know how a hook works internally
 - Avoid `useEffect` for derived state — compute it inline or with `useMemo`
 - Never use indexes as `key` props in dynamic lists; use stable, unique IDs
@@ -34,6 +36,7 @@ Various web dev rules, reusable across various projects
 - Keep components focused — if it needs a long comment to explain what it does, split it
 - Separate logic from presentation (custom hooks, utils)
 - No hardcoded strings visible to the user — use constants or i18n keys
+- Interactive elements must be keyboard-accessible and have appropriate ARIA labels where native semantics fall short
 
 ## Styling
 - No inline styles except for truly dynamic values
@@ -52,9 +55,9 @@ Various web dev rules, reusable across various projects
 ## File Structure
 - Feature-based folders over type-based (`/auth` not `/hooks + /components + /utils`)
 - Index files for clean imports; avoid barrel files that cause circular deps
-- Keep filenames lowercase with hyphens (`user-profile.tsx`), **except component files which use PascalCase (`UserProfile.tsx`, `UserProfile.vue`, `UserProfile.svelte`)**
-- Test files co-located and mirroring source: user-profile.test.ts
-- Type files when you do promote shared types: user.types.ts or user.d.ts
+- Keep filenames lowercase with hyphens (`some-script.tsx`)
+- Test files co-located and mirroring source: `some-script.test.ts`
+- Type files when you do promote shared types: `user.types.ts` or `user.d.ts`
 
 ## Routing (framework-agnostic)
 - Route paths are lowercase kebab-case: `/user-settings`, not `/userSettings`
