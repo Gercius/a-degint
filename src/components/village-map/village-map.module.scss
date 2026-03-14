@@ -4,6 +4,12 @@
     width: 100%;
 }
 
+@media (max-width: 768px) {
+    .map :global(.leaflet-top.leaflet-left) {
+        top: calc(env(safe-area-inset-top) + 5.5rem);
+    }
+}
+
 .labelsHidden :global(.leaflet-tooltip).houseNumberTooltip {
     display: none;
 }

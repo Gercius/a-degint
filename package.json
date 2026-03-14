@@ -9,7 +9,8 @@
         "preview": "vite preview",
         "lint": "npx eslint .",
         "style": "npx prettier --check .",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "deploy": "git checkout gh-pages && git merge main --no-edit && npm run build && git add dist -f && git commit -m 'Deployment commit' && git subtree push --prefix dist origin gh-pages && git switch main"
     },
     "dependencies": {
         "@types/leaflet": "^1.9.21",
