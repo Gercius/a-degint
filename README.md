@@ -1,5 +1,7 @@
 # A Degint?
 
+Svetainė - https://gercius.github.io/a-degint/
+
 **A Degint?** - internetinė programėlė skirta patikrinti a degint deginamus dalykus deginamoje vietoje.  
 Ir ar **galimai** neuždūminsit kaimynų.
 
