@@ -48,9 +48,6 @@ export function SmokeWarning({ selectedBuilding, downwindBuildings, windStatus }
     return (
         <div className={styles.smokeWarning}>
             <p className={styles.warning}>Dūmai gali pasiekti kaimyninius pastatus!</p>
-            <p className={styles.warning}>
-                Raudonos spalvos žymėjimas žemėlapyje rodo pastatus, kurie gali būti paveikti.
-            </p>
         </div>
     );
 }

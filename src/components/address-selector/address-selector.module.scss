@@ -136,10 +136,15 @@
     }
 
     .dropdown {
-        max-height: 300px; // Allow more height on mobile
+        max-height: min(300px, 32dvh);
     }
 
     .dropdownItem {
         padding: 1rem; // Larger touch target for mobile
+    }
+
+    .noResults {
+        max-height: min(120px, 20dvh);
+        overflow-y: auto;
     }
 }

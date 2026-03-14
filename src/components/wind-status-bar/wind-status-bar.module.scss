@@ -1,6 +1,6 @@
 .windStatusBar {
     position: absolute;
-    top: 10px;
+    top: max(10px, env(safe-area-inset-top));
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
@@ -49,6 +49,19 @@
     font-size: 0.75rem;
     opacity: 0.7;
     font-family: monospace;
+}
+
+@media (max-width: 768px) {
+    .windStatusBar {
+        top: max(8px, calc(env(safe-area-inset-top) + 8px));
+        width: calc(100% - 1rem);
+        min-width: 0;
+        padding: 0.625rem 0.75rem;
+    }
+
+    .content {
+        gap: 0.5rem;
+    }
 }
 
 .refreshButton {
