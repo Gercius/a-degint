@@ -6,6 +6,7 @@ interface AddressSelectorProps {
     buildings: Building[];
     selected: Building | null;
     onChange: (building: Building | null) => void;
+    onSearchOpenChange?: (isOpen: boolean) => void;
 }
 
 function normalizeSearchValue(value: string) {
@@ -22,7 +23,7 @@ function tokenizeSearchValue(value: string) {
         .filter(Boolean);
 }
 
-export function AddressSelector({ buildings, selected, onChange }: AddressSelectorProps) {
+export function AddressSelector({ buildings, selected, onChange, onSearchOpenChange }: AddressSelectorProps) {
     const [inputValue, setInputValue] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -66,6 +67,10 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
             setInputValue("");
         }
     }, [selected]);
+
+    useEffect(() => {
+        onSearchOpenChange?.(isOpen);
+    }, [isOpen, onSearchOpenChange]);
 
     // Close dropdown on outside click
     useEffect(() => {
@@ -129,6 +134,7 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
                 e.preventDefault();
                 setIsOpen(false);
                 setHighlightedIndex(-1);
+                dismissInput();
                 break;
             case "Tab":
                 setIsOpen(false);
@@ -152,9 +158,15 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
                 <input
                     ref={inputRef}
                     type="text"
+                    name="house-search"
                     className={styles.input}
                     placeholder="Pasirinkite savo namą…"
                     value={inputValue}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    enterKeyHint="search"
                     onChange={(e) => {
                         setInputValue(e.target.value);
                         setIsOpen(true);

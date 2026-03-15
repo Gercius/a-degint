@@ -26,12 +26,19 @@
         width: 100%;
         border-radius: 12px 12px 0 0;
         padding: 1rem;
-        max-height: min(60vh, calc(100dvh - 5rem - env(safe-area-inset-top)));
+        height: 12.5rem;
         overflow-y: auto;
         padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+        transition:
+            height 0.24s ease,
+            box-shadow 0.24s ease,
+            background-color 0.24s ease;
     }
 
-    .controlPanel:focus-within {
-        max-height: calc(100dvh - 5rem - env(safe-area-inset-top));
+    .expanded {
+        height: 28rem;
+        overflow: visible;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+        background: rgba(24, 24, 24, 0.97);
     }
 }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Building } from "../../utils/buildings";
 import { AddressSelector } from "../address-selector/address-selector";
 import { SmokeWarning } from "../smoke-warning/smoke-warning";
@@ -18,9 +19,16 @@ export function ControlPanel({
     downwindBuildings,
     windStatus,
 }: ControlPanelProps) {
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
     return (
-        <div className={styles.controlPanel}>
-            <AddressSelector buildings={buildings} selected={selectedBuilding} onChange={onBuildingChange} />
+        <div className={`${styles.controlPanel} ${isSearchOpen ? styles.expanded : ""}`}>
+            <AddressSelector
+                buildings={buildings}
+                selected={selectedBuilding}
+                onChange={onBuildingChange}
+                onSearchOpenChange={setIsSearchOpen}
+            />
             <SmokeWarning
                 selectedBuilding={selectedBuilding}
                 downwindBuildings={downwindBuildings}

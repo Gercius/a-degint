@@ -135,7 +135,7 @@
     }
 
     .dropdown {
-        max-height: min(360px, 45dvh);
+        max-height: 18rem;
     }
 
     .dropdownItem {
@@ -146,7 +146,7 @@
     }
 
     .noResults {
-        max-height: min(120px, 20dvh);
+        max-height: 7rem;
         overflow-y: auto;
     }
 }
