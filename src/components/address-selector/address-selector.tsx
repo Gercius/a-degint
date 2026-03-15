@@ -31,6 +31,10 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
     const containerRef = useRef<HTMLDivElement>(null);
     const skipNextFocusOpenRef = useRef(false);
 
+    const dismissInput = useCallback(() => {
+        inputRef.current?.blur();
+    }, []);
+
     // Filter buildings based on input
     const normalizedInputValue = normalizeSearchValue(inputValue).trim();
     const searchTokens = tokenizeSearchValue(inputValue);
@@ -83,9 +87,9 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
             onChange(building);
             setIsOpen(false);
             setHighlightedIndex(-1);
-            inputRef.current?.focus();
+            dismissInput();
         },
-        [onChange],
+        [dismissInput, onChange],
     );
 
     // Handle clear
@@ -94,8 +98,8 @@ export function AddressSelector({ buildings, selected, onChange }: AddressSelect
         onChange(null);
         setInputValue("");
         setIsOpen(false);
-        inputRef.current?.focus();
-    }, [onChange]);
+        dismissInput();
+    }, [dismissInput, onChange]);
 
     // Keyboard navigation
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
