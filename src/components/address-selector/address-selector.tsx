@@ -108,6 +108,25 @@ export function AddressSelector({ buildings, selected, onChange, onSearchOpenCha
 
     // Keyboard navigation
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+
+            if (highlightedIndex >= 0 && highlightedIndex < filteredBuildings.length) {
+                handleSelect(filteredBuildings[highlightedIndex]);
+                return;
+            }
+
+            if (filteredBuildings.length === 1) {
+                handleSelect(filteredBuildings[0]);
+                return;
+            }
+
+            setIsOpen(false);
+            setHighlightedIndex(-1);
+            dismissInput();
+            return;
+        }
+
         if (!isOpen) {
             if (e.key === "ArrowDown" || e.key === "ArrowUp") {
                 setIsOpen(true);
@@ -123,12 +142,6 @@ export function AddressSelector({ buildings, selected, onChange, onSearchOpenCha
             case "ArrowUp":
                 e.preventDefault();
                 setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-                break;
-            case "Enter":
-                e.preventDefault();
-                if (highlightedIndex >= 0 && highlightedIndex < filteredBuildings.length) {
-                    handleSelect(filteredBuildings[highlightedIndex]);
-                }
                 break;
             case "Escape":
                 e.preventDefault();
