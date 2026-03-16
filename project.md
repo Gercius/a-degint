@@ -198,17 +198,3 @@ App.tsx
 ### Deployment
 - Static site: copy `dist/` to any static host (Netlify, Vercel, GitHub Pages, etc.)
 - No backend, no environment variables required
-
----
-
-## Known Limitations
-
-1. **Geolocation (F4)**: Not implemented — could reduce friction for home selection
-2. **Manual Refresh**: Intentionally omitted from UI; auto-refresh every 10 min
-3. **Mobile UX**: Some polish items optional in F2/F3 (scroll hijack, tap targets)
-4. **Offline Wind**: Wind data requires network; last known data shown on error
-5. **Village-Specific**: Hardcoded coordinates and GeoJSON; not generalizable without code changes
-
----
-
-*Last updated: 2025-03-12*
