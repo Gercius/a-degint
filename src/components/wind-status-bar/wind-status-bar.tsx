@@ -13,7 +13,7 @@ export const WindStatusBar = ({ wind, status, error, lastUpdated }: WindStatusBa
     const isLoading = status === "loading";
 
     return (
-        <div className={styles.windStatusBar}>
+        <div className={styles.windStatusBar} data-nosnippet>
             <div className={styles.content}>
                 {wind && (
                     <span className={styles.windInfo}>
